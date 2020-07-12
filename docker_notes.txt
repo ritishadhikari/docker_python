@@ -1,0 +1,9 @@
+1. Docker Compose allows management of Multi Container applications in a coordinated way. Spilt
+your work into a number of containers. One for the webserver, one for WSGI application server, one
+for a Database engine. It introduces compose files where few simple lines of YAML codes, define such
+multi-container applications with necessary runtime environment artifacts.
+
+2. Docker Swarm can allows to define and run applications stack with multiple services, virtual networks,
+volumes, configuration files, secrets etc. Each services is made of one or more containers. Swarm can
+scale each services independently, adding more replicas or instances of a particular image or decrease it.
+Swarm also enables a controlled upgrade of software running in a service. Rolling Upgrades are possible here.
