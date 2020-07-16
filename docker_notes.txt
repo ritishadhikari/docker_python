@@ -7,3 +7,26 @@ multi-container applications with necessary runtime environment artifacts.
 volumes, configuration files, secrets etc. Each services is made of one or more containers. Swarm can
 scale each services independently, adding more replicas or instances of a particular image or decrease it.
 Swarm also enables a controlled upgrade of software running in a service. Rolling Upgrades are possible here.
+
+3. docker run --rm -it -p 5001:5000 pythonincontainers/simple-flask:v1.0 :
+   --rm : Tells Docker to delete the container when its primary command defined with cmd finishes.
+   -it : Tells Docker to launch the container interactively and give access to the current terminal.
+   -p 5001:5000 : Binds container's port 5000 to host's 5001.
+   pythonincontainers/simple-flask:v1.0 : Image name and tag
+
+4. sudo usermod -aG docker ritish : after typing this, it allows the user to run docker containers
+without sudo
+
+5. docker container create --tty --interactive python : Creating a Container ID
+
+6. docker container ps --all : Checking for live  and previous containers.
+
+7. docker container rename keen_volhard ritish_adhikari : Renaming the name of the containers
+
+8. docker container start ritish_adhikari : Starting the container as created before.
+
+9. docker container rm ritish_adhikari: Remove the Container. We can also put the container id
+   : "f17109ddebf5", inplace of the name.
+
+10. docker run -it --name ritish_adhikari python : Similar to docker create and docker start command at one go.
+-it stands for --interactive and --tty and we create the name ritish_adhikari in the --name itself.
