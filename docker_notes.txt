@@ -8,25 +8,134 @@ volumes, configuration files, secrets etc. Each services is made of one or more 
 scale each services independently, adding more replicas or instances of a particular image or decrease it.
 Swarm also enables a controlled upgrade of software running in a service. Rolling Upgrades are possible here.
 
-3. docker run --rm -it -p 5001:5000 pythonincontainers/simple-flask:v1.0 :
+3. docker build -t pythonincontainers/simple-flask:v1.0 . : Build the Docker Container through Docker File.
+Tag it to pythonincontainers/simple-flask:v1.0.
+
+4. docker run --rm -it -p 5001:5000 pythonincontainers/simple-flask:v1.0 : Run that
    --rm : Tells Docker to delete the container when its primary command defined with cmd finishes.
    -it : Tells Docker to launch the container interactively and give access to the current terminal.
    -p 5001:5000 : Binds container's port 5000 to host's 5001.
    pythonincontainers/simple-flask:v1.0 : Image name and tag
 
-4. sudo usermod -aG docker ritish : after typing this, it allows the user to run docker containers
+5. sudo usermod -aG docker ritish : after typing this, it allows the user to run docker containers
 without sudo
 
-5. docker container create --tty --interactive python : Creating a Container ID
+6. docker container create --tty --interactive python : Creating a Container ID
 
-6. docker container ps --all : Checking for live  and previous containers.
+7. docker container ps --all : Checking for live  and previous containers.
 
-7. docker container rename keen_volhard ritish_adhikari : Renaming the name of the containers
+8. docker container rename keen_volhard ritish_adhikari : Renaming the name of the containers
 
-8. docker container start ritish_adhikari : Starting the container as created before.
+9. docker container start ritish_adhikari : Starting the container as created before.
 
-9. docker container rm ritish_adhikari: Remove the Container. We can also put the container id
+10. docker container rm ritish_adhikari: Remove the Container. We can also put the container id
    : "f17109ddebf5", inplace of the name.
 
-10. docker run -it --name ritish_adhikari python : Similar to docker create and docker start command at one go.
+11. docker run -it --name ritish_adhikari python : Similar to docker create and docker start command at one go.
 -it stands for --interactive and --tty and we create the name ritish_adhikari in the --name itself.
+
+12. The folder which are present inside that of a Docker Container are:
+['media', 'usr', 'root', 'bin', 'proc', 'tmp', 'boot', 'opt', 'home', 'dev', 'lib64', 'srv', 'run', 'sys',
+'sbin', 'var', 'etc', 'mnt', 'lib', '.dockerenv']
+'app' directory does not come by default, but the user needs to explicitly state it.
+
+13. docker cp myfirst.py my:/tmp/myfirst.py : Copying the python script myfirst.py into /tmp/myfirst.py
+inside that of a Docker Container. my being the name of the container.
+
+14. exec(open('/tmp/myfirst.py').read()) : Run a python script inside python
+
+15. docker run -it --name my -v ${PWD}:/app python : Sharing the contents of the Present Working directory
+with the path as is mentioned and running python code. Rather then copying the contents here, we are
+sharing or mounting. But it will open a python interpretor, from where we are supposed to run our
+python script.
+
+16. docker run --name my -it -v ${PWD}:/app/ python python /app/myfirst.py : This code is similar to the above,
+but rather than opening the python interpretor, post the mounting, it would run the python script -
+myfirst.py which resides inside the app folder.
+
+17. docker run --name my -it -v ${PWD}:/app/ python python /bin/bash : Takes through to the linux environment as a
+root user, from where we can access any files and even enter inside the app folder and run any python scripts there.
+
+18. docker run -it -v ${PWD}:/app/ -p 5001:5000 python /bin/bash : If we want to run a flask or jango based
+applications with port mapping, then we also need to -p host:container. Here port 5001 of the local host
+is mapped to port 5000 of the container. We need to run these three for running the flask based .py script:
+    - export FLASK_DEBUG=1
+    - export FLASK_APP=mythird.py
+    - flask run --host=0.0.0.0
+
+19. A container image is a combination of :
+    - Filesystem : Directories, Files, Binaries, Data Source code
+    - Metadata : Architecture & OS Start-up Command Environment Variables.
+
+20. docker image inspect python : To get the metadata for the image : python.
+
+21. docker image ls : Lists the images availabe in the local repo.
+
+22. docker image prune -a : Major Image Cleanup which does not have any containers running.
+
+23. docker run --rm -d --name simple-flask -p 5001:5000 pythonincontainers/simple-flask:v1.0 : Containers
+running properly, without being attached to a terminal.
+
+24. docker logs simple-flask : To get the logs of the container running in a detached state.
+
+25. docker logs --since 3m simple-flask :  To get the logs printed in the last 3 minutes from the container
+running in a detached state.
+
+26. docker logs --since 3m --tail 3 simple-flask : To get the logs of the last 3 operations since the
+last 3 minutes.
+
+27. docker logs -f simple-flask : To follow up with the container with -it kind.
+
+28. docker attach simple-flask: To attch the container which got broken down by pressing control c.
+
+29. docker run -it --rm --name myp -m 200m --memory-swap 300m --cpus 0.6 python:3.7 : Running a Docker Container with
+restrictions on Memory(ram) and cpu. If the memory gets filled up, then it will free upto  another 100 MB from
+RAM to Disk.
+
+30. docker stats : To show the statistics of all the running containers.
+
+31. docker ps -aq : Gives the list of all stopped containers.
+
+32. docker rm -f $(docker ps -aq) : To remove all the stopped container. Once removed, they cannot be started again.
+
+33. docker network create my-net : Creating a Network in docker which will help to connect a flask based
+application inside a Centos container.
+
+34. docker run -d --name simple-flask --network my-net ritish/flask : Running a Flask Container with the network
+created above.
+
+35. docker run --rm -it --name centos --network my-net centos : Running a centos container with the same network.
+
+36. curl simple-flask:5000/TEST : Running the Flask app from inside Centos with the network id. This network is
+aiding in running multiple containers.
+
+37. docker run -d --name proxy-server --network my-net nginx : Also creating an nginx server connecting with then
+same network name to be run inside centos along with simple-flask.
+
+38. curl proxy-server:80 : Running the proxy server inside of centos.
+
+39. docker run --rm -it --link simple-flask:webserver centos : This allows to link simple-flask container
+inside of centos.
+
+40. curl webserver:5000 : After linking we run this command to run the flask application inside of centos.
+
+41. env | grep WEBSERVER : gives the lists of webserver details connected to the container in centos.
+
+42. docker volume create my-vol : Creating a Docker Volume, so that even after removing a container, once starting
+the same container, the items inside of the container exists.
+
+43. docker run -it --name my --volume my-vol:/app python bash : Running a Docker Container with the volume
+being attached to the app folder inside the container.
+
+44. cat <<-EOF >script.py :
+> print("Hello from a Container")
+> EOF
+Creating a script.py inside the container. Even after doing - docker rm my, if we use
+docker run -it --name my --volume my-vol:/app python bash again, the script.py will reside.
+
+45. docker volume ls : Lists the docker volumes in the systems.
+
+46. docker volume inspect my-vol : Gives more detail on our created docker : my-vol.
+
+47. docker volume rm my-vol : Removing the my-vol volume from docker. Before this, remove the container
+by doing : docker rm my or docker rm -f my.
