@@ -139,3 +139,62 @@ docker run -it --name my --volume my-vol:/app python bash again, the script.py w
 
 47. docker volume rm my-vol : Removing the my-vol volume from docker. Before this, remove the container
 by doing : docker rm my or docker rm -f my.
+
+Each container we create in Docker, gets its own network stack. Default IP address of connection is 172.17.0.0/16.
+It connects to home network in NAT mode.
+
+48. docker network ls : Gives the names of the container available by default. Ex: bridge, host, my-net (created)
+and none.
+
+When we create a new container and don't attach it to a specific network explicitly, then it is
+connected to bridge by default.
+
+49. docker run --rm -it --network host alpine : Container in alpine connected to host network. Here network
+specific applications can only be run. Such container has no network isolation and all its published ports
+are directly visible in host's system. In short we don't have to map port.
+
+50. docker network rm new-net : Remove a network. We have to make sure, there are no active Containers connected
+with that network.
+
+51. docker ps --filter network=my-net : Lists the containers attached to a specific network. Here - mynet.
+
+52. docker network connect my-addr alpine2 : Connecting a container called alpine2 with a network my-addr.
+alpine 2 was not initially connected to my-addr but the default bridge network. Post the connection, the
+container alpine 2 can ping another container alpine1 connected with my-addr originally through ping -c 1 alpine1.
+
+53. docker network disconnect my-addr alpine2 : Disconneting a Container alpine2 from a netwrok my-addr.
+
+Internal Networks are used to limit the internet connectivity running an image we don't trust.
+
+54. docker network create --internal int-net : Creating an internal container int-net
+
+55. docker run -dit --name int1 --network int-net alpine : Attaching a detached container int1 to int-net
+container.
+
+56. docker run --rm -it --name int2 --network int-net alpine : Creating another container int2.
+If we ping ping -c 1 int1 then we will get the ping, but if we ping www.google.com, theen we won't get
+the ping as it is connected to an internal network.
+
+57. docker run -d -P --name flask-hello flask-hello:1.0 : Run a docker image flask-hello:1.0 with -P which signifies
+take which ever port the container port 5000 points to host. Get the host port by doing docker ps and check from
+the container flask-hello. We can also do docker image inspect flask-hello:1.0 or docker inspect flask-hello to
+get meta data information. The later also shows the host port details : docker inspect flask-hello | grep Host.
+
+58. docker login : To login to docker hub through username and password.
+
+59. docker logout : Logout from docker hub.
+
+60. docker tag ritishadhikari/flask-hello:2.0 ritishadhikari/flask-hello:latest : Tagging an image as the latest
+
+61. docker push ritishadhikari/flask-hello : Post the tagging, pushing it to the docker hub.
+
+62. docker run -it --rm --name ritish4rmweb -p 5001:5000 ritishadhikari/flask-hello:latest : After we have pushed the
+image, even if we have deleted the image in our local, we can still run the image by calling this command.
+
+63. docker run -d -p 8000:8000 -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock
+-v portainer_data:/data portainer/portainer : We can set up a GUI portainer through this way. portainer
+allows to add/remove and do other stuffs related to Images, Containers, Networks, Volumes and others interactively.
+
+Docker Machine is a tool used to create and manage the Docker Runtime environments encapsulated in Virtual Machines.
+Such VMs can be created and run either on a local host - our development system or on a remote system and also in the
+cloud.
