@@ -198,3 +198,27 @@ allows to add/remove and do other stuffs related to Images, Containers, Networks
 Docker Machine is a tool used to create and manage the Docker Runtime environments encapsulated in Virtual Machines.
 Such VMs can be created and run either on a local host - our development system or on a remote system and also in the
 cloud.
+
+64. docker-machine create test-vm --virtualbox-no-vtx-check : Creating a Docker Machine. The --virtualbox-no-vtx-check
+command is not mandatory but if not provided, the docker-machine won't get created.
+
+65. docker-machine env test-vm : Sets the path variable for TLS,Host,Certificate Path and Machine Name.
+
+66. docker-machine stop test-vm : Stops the Docker Machines.
+
+67. docker-machine start test-vm : Starts the Docker Machine which was stopped.
+
+66. docker-machine rm -f test-vm : Remove Docker Machine.
+
+67. unset DOCKER_HOST DOCKER_MACHINE_NAME DOCKER_TLS_VERIFY DOCKER_CERT_PATH : After removing the Docker Machine,
+remove the Docker path variable associated with the Docker Machine.
+
+68. docker-machine ip test-vm : Gives the machine ip address.
+
+69. docker-machine create --driver google --google-project healthy-system-283205 --google-zone us-west4-c gce-machine        :
+Create a docker-machine with google. healthy-system-283205 is the project id.
+
+70. gcloud compute firewall-rules create machine-8000 --action allow --target-tags "docker-machine" --source-ranges
+"0.0.0.0/0" --rules "tcp:8000" : Define the port options
+
+71. 
