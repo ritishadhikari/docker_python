@@ -221,4 +221,70 @@ Create a docker-machine with google. healthy-system-283205 is the project id.
 70. gcloud compute firewall-rules create machine-8000 --action allow --target-tags "docker-machine" --source-ranges
 "0.0.0.0/0" --rules "tcp:8000" : Define the port options
 
-71. 
+71. docker commit manual manual-image:1.0 : Tagging a container to an image.
+When we do docker create and docker run,the container gets created without the image.
+Hence to create or tag an image out of the containers we run this command.
+The following supportive commands were run while running the above command.
+docker create -it --name manual -p 5000:5000 python:3.7 /bin/bash
+docker cp hello.py manual:/app
+docker cp start-app.sh manual:/app
+docker start -i manual
+>chmod +x /app/start-app.py
+
+72. docker commit --change "CMD /app/start-app.sh" manual manual-image:1.1 : Tagging a container to an image.
+But this time, we are explicitly mentioning the workflow that the /app-start-app.sh needs to be started
+after the bash shell gets created.
+
+73. docker build -f Dockerfile.env -t automated-image:1.1 . : To build an image when the name of the Dockerfile
+is other than the standard name : Dockerfile. Here the name of the dockerfile is Dockerfile.env.
+
+74. FROM alpine
+    FROM ubuntu:18.04
+    FROM python
+    : Creating three images, alpine versions of Ubuntu and python.
+
+The .dockerignore file will contain the list of files and directories which need not be copied
+from the source to docker daemon. Anything to be exempted from ignoring post labelling through a
+wildcard expression, needs to be stated with an exclaimation (!); its's like negating the negation.
+
+The basic differences between ADD and COPY is that, while ADD can actually add tar files and files
+from HTML to the docker daemon, the COPY command can't do this above two activities.
+
+75. docker build -t flask-hello https://github.com/pythonincontainers/flask-hello.git : Building an image
+directly from the github. The Dockerfile must be present inside the repository to enable the build.
+
+RUN command inside a JSON file runs in an non interactive way. We must make sure that commands we run with
+the RUN command do not expect any user input.
+
+Python official Image contains software package installation subsystem with "apt-get", as it is based
+on Debian flavour of Linux.
+
+Any Docker File command placed before the Volume Command, can update files under future mount point,
+but command after mount point cannot. Check for Docker.vol1 file under accessory_docker_files. Lecture -48.
+
+76. docker inspect -f "ENTRYPOINT={{ .Config.Entrypoint }} CMD={{ .Config.Cmd }}" child : Here we are inspecting
+the Entrypoint and Cmd of the Child Image.
+
+77. docker build -t parent -f Dockerfile.parent .
+    docker build -t child -f Dockerfile.child .  : parent-child image relationships. All the commands
+    from the parent are inherited to the child, until there is a same command in the child which is also
+    there in the parent. At that time, the child's command is executed and not the parent. Lecture 49.
+
+78. In case of multiple entrypoints and cmd declarations in one docker file, the very last prevails.
+
+79. docker run --rm child one two three: substituting the CMD command in Docker File with one two three.
+
+80. docker run --rm --entrypoint python3 child args.py helloworld : Altering the entrypoint command during
+Docker runtime. here child is the name of the image, python3 is the name of the entrypoint while args.py helloworld
+is the name of cmd which is assumed.
+
+CMD in shell format without list form does not work well with non empty entry point (automatic entrypoint),
+as it is converted through shell format internally before execution of the file.
+
+When ever we use Entrypoint in shell form, the CMD is ignored. Shell form is suitable only when either of
+entrypoint or cmd is used.
+
+ENV defines environment variables in a Dockerfile. When a container is created, or run, a value of such variables
+can be changed by using "-env" option. Environment variables can be used to define a server address or may be a
+database name or any other configuration parameter. This helps to build a powerful universal image and then
+configure it at runtime.
