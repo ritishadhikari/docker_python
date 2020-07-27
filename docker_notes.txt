@@ -259,6 +259,10 @@ the RUN command do not expect any user input.
 Python official Image contains software package installation subsystem with "apt-get", as it is based
 on Debian flavour of Linux.
 
+When we use a volume in our docker file and then copy relevant files into it, the volume command stores the
+information into it. This volume (either manually created or auto created during runtime) can be mounted
+to any other images during Docker RUntime.
+
 Any Docker File command placed before the Volume Command, can update files under future mount point,
 but command after mount point cannot. Check for Docker.vol1 file under accessory_docker_files. Lecture -48.
 
@@ -288,3 +292,51 @@ ENV defines environment variables in a Dockerfile. When a container is created, 
 can be changed by using "-env" option. Environment variables can be used to define a server address or may be a
 database name or any other configuration parameter. This helps to build a powerful universal image and then
 configure it at runtime.
+
+Variables defined with arg instructions exists only during the build time.
+
+81. docker build -t args -f Dockerfile.arg  --build-arg Flask_Ver=1.0.0 --build-arg Python_Image_Tag=3.7-alpine . :
+Building an image with a defined version of flask and Python_Image_Tag through --build-arg command. --build-arg
+option overrides all occurences of ARG variable declarations. Lecture 50. ./Dockerfile-arg/Dockerfile.env.
+
+The Commands with which Arg Variables can be used are : FROM, RUN, ENV,COPY,ADD,EXPOSE,LABEL,STOPSIGNAL,
+USER,VOLUME,WORKDIR.
+
+If we generate a lot of images and keep them, searching for the right one may be easier by labelling images.
+
+Typical Python Application configuration options include use of Environment Variables, Configuration files and
+command line options and arguments.
+
+In ./reusable/Dockerfile.env we run the python script - config-reader.py along with by passing the environment
+variables - CONFIG_COLOR and CONFIG_SHAPE from the Docker File.
+
+82. docker run -it --rm -e CONFIG_SHAPE=dot env : We can label our config variable during docker runtime by
+using this command. This will overwrite the CONFIG_SHAPE pre initialized in Dockerfile.env.
+
+In ./reusable/Dockerfile.file, we pass a config file called default.ini through which the config values
+are picked up in the python script - config-reader.py
+
+83. docker run -it --rm -v ${PWD}/app/configs/blue_circle.ini:/app/default.ini file : To run a separate file
+other than the default.ini at run time, even after building the Dockerfile.file with default.ini initially.
+
+In ./reusable/Dockerfile.args, we are passing the arguments for color and shape to the the python script -
+config-reader.py
+
+84. docker run -it --rm args --color "silver" --shape "pentagon" : Changing the cmd from the terminal for the
+Docker build with Dockerfile.args.
+
+After running a container without --rm tag, we can stop it by pressing ctrl+c and if we start the same container
+again by docker start -ai container name (defined through --name during docker run), we can get back to the old
+working state of the container.
+
+We can pass an environment variable to a docker file or during docker runtime ny using -e which will
+then be passed on to the cmd file. This can enable the automated capability testing for required libraries.
+Example : ./buildtime-runtime/Dockerfile.runtime & ./buildtime-runtime/requirements.txt
+
+Container runtime provides automatic restart capability, which can be very helpful to enable high availability
+of service.
+
+Multistage Build helps us to copy relevant modules created in a directory from one image to another. The first
+image can be a bigger image while the second image can be a smaller image. The final image size belongs to that
+of the smaller image.
+./multistage/Dockerfile.cython-multi. Lecture 54.
