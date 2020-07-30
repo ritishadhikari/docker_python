@@ -162,7 +162,7 @@ with that network.
 alpine 2 was not initially connected to my-addr but the default bridge network. Post the connection, the
 container alpine 2 can ping another container alpine1 connected with my-addr originally through ping -c 1 alpine1.
 
-53. docker network disconnect my-addr alpine2 : Disconneting a Container alpine2 from a netwrok my-addr.
+53. docker network disconnect my-addr alpine2 : Disconneting a Container alpine2 from a network my-addr.
 
 Internal Networks are used to limit the internet connectivity running an image we don't trust.
 
@@ -340,3 +340,37 @@ Multistage Build helps us to copy relevant modules created in a directory from o
 image can be a bigger image while the second image can be a smaller image. The final image size belongs to that
 of the smaller image.
 ./multistage/Dockerfile.cython-multi. Lecture 54.
+
+85. docker run -it --rm -v ${PWD}:/app -w /app cython-full : The addition of -w is it signifies the current
+working directory if not explicitly stated in the Dockerfile. Ex. ./buildcustom/Dockerfile.cython0.28.5-full.
+
+In ./buildcustom/Dockerfile.cython-flask-slim we achieve three things:
+a. smaller Image size as we are doing multi stage build
+b. faster build : since we don't have to run pip install requirements.txt
+c. faster execution : since we are using cython based modules.
+
+
+86. docker export -o rootfs.tar python-3.7 : This export the containers file python-3.7 which was
+created by using docker run -it --name python-3.7 python:3.7-slim bash and removing the unwanted modules.
+This rootfs.tar will be used for security testing.
+
+87. docker cp multistage_container:/app/factors_flask.py . : Copying  factors_flask.py from
+inside a container to outside in the host's present file path.
+
+89.
+docker run -d --name db --network polls_net -e POSTGRES_PASSWORD=myprecious postgres : Run a postgres
+container
+docker run -it --rm --network polls_net postgres psql -h db -U postgres : Create Superuser by
+connecting to the host db
+CREATE USER pollsuser WITH PASSWORD 'pollspass' CREATEDB; : Creating a User
+CREATE DATABASE pollsdb WITH OWNER pollsuser; : Creating a Database
+\du : Lists the name of users and Superusers
+\l : Lists the databases created.
+
+90. docker run -d --name db --network polls_net -e POSTGRES_DB=pollsdb
+-e POSTGRES_USER=pollsuser -e POSTGRES_PASSWORD=pollspass
+-v polls_vol:/var/lib/postgresql/data postgres : Creating the DB, the user,
+Password all at one go without the need to create a superuser. Here pollsuser has superuser
+privileges assigned. Also creating a Volume so that even when this db container is removed,
+the data residing inside the /var/lib/postgresql/data location stays on.
+This way of launching Postgres is easiest and least cumbersome.
